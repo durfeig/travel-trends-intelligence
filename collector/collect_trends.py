@@ -118,26 +118,27 @@ def collect_trending(sb: Client, pytrends: TrendReq) -> None:
 def collect_rising(sb: Client, pytrends: TrendReq) -> None:
     log.info("=== Modo: related queries rising ===")
     today = date.today().isoformat()
-    rows = []
 
     for country in MONITORED_COUNTRIES:
         geo = country["geo"]
         keywords = get_travel_keywords(geo)
+        rows = []  # insertar por país, no acumular todo
 
         for kw in keywords:
             try:
-                pytrends.build_payload([kw], cat=67, timeframe="now 7-d", geo=geo)  # cat 67 = Travel
+                pytrends.build_payload([kw], cat=67, timeframe="now 7-d", geo=geo)
                 related = pytrends.related_queries()
 
                 rising_df = related.get(kw, {}).get("rising")
                 if rising_df is not None and not rising_df.empty:
                     for _, row_data in rising_df.head(10).iterrows():
-                        query = str(row_data["query"])
-                        value = int(row_data["value"])
+                        raw_value = row_data["value"]
+                        # "Breakout" = crecimiento infinito, lo mapeamos a 100
+                        value = 100 if str(raw_value) == "Breakout" else min(int(raw_value), 100)
                         rows.append({
-                            "destination": query,
+                            "destination": str(row_data["query"]),
                             "origin_country": geo,
-                            "interest_score": min(value, 100),
+                            "interest_score": value,
                             "snapshot_date": today,
                             "source": "rising_query",
                         })
@@ -149,9 +150,8 @@ def collect_rising(sb: Client, pytrends: TrendReq) -> None:
                 log.warning(f"  {geo} / '{kw}' error: {e}")
                 time.sleep(REQUEST_DELAY_S * 2)
 
+        insert_snapshots(sb, rows)  # guardar inmediatamente después de cada país
         time.sleep(BATCH_DELAY_S)
-
-    insert_snapshots(sb, rows)
 
 
 # ── Modo 3: Interest over time para lista fija de destinos ─────────────────────
