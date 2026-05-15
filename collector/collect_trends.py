@@ -52,14 +52,17 @@ def supabase_client() -> Client:
 
 def insert_snapshots(sb: Client, rows: list[dict]) -> None:
     if not rows:
+        log.warning("  insert_snapshots: rows vacío, nada que insertar")
         return
+    log.info(f"  Intentando insertar {len(rows)} rows en Supabase...")
+    log.info(f"  Ejemplo row: {rows[0]}")
     try:
         result = sb.table("trend_snapshots").insert(rows).execute()
-        log.info(f"  → {len(rows)} snapshots guardados")
-        if hasattr(result, 'error') and result.error:
-            log.error(f"  Supabase error: {result.error}")
+        log.info(f"  → {len(rows)} snapshots guardados. Result: {result}")
     except Exception as e:
-        log.error(f"  Error insertando snapshots: {e}")
+        import traceback
+        log.error(f"  ERROR insertando snapshots: {e}")
+        log.error(traceback.format_exc())
 
 
 # ── Modo 1: Trending searches diarios ─────────────────────────────────────────
