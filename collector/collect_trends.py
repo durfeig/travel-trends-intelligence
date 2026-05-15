@@ -53,10 +53,11 @@ def supabase_client() -> Client:
 def insert_snapshots(sb: Client, rows: list[dict]) -> None:
     if not rows:
         return
-    # Deduplicar por destination + origin_country + snapshot_date
     try:
-        sb.table("trend_snapshots").upsert(rows, on_conflict="destination,origin_country,snapshot_date,source").execute()
+        result = sb.table("trend_snapshots").insert(rows).execute()
         log.info(f"  → {len(rows)} snapshots guardados")
+        if hasattr(result, 'error') and result.error:
+            log.error(f"  Supabase error: {result.error}")
     except Exception as e:
         log.error(f"  Error insertando snapshots: {e}")
 
