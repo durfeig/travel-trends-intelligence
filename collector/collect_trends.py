@@ -208,7 +208,8 @@ def main():
 
     log.info(f"Iniciando colección — modo: {args.mode} — {datetime.now().isoformat()}")
 
-    if args.mode in ("trending", "all"):
+    # trending_searches() excluido del modo 'all' — endpoint de Google da 404
+    if args.mode == "trending":
         collect_trending(sb, pytrends)
         time.sleep(BATCH_DELAY_S)
 
