@@ -80,6 +80,25 @@ TRAVEL_KEYWORDS_BY_LANG = {
     ],
 }
 
+# Mapeo de código ISO → nombre para pytrends.trending_searches(pn=...)
+TRENDING_SEARCH_COUNTRY = {
+    "AR": "argentina",
+    "BR": "brazil",
+    "CL": "chile",
+    "MX": "mexico",
+    "CO": "colombia",
+    "ES": "spain",
+    "PT": "portugal",
+    "FR": "france",
+    "IT": "italy",
+    "DE": "germany",
+    "GB": "united_kingdom",
+    "NL": "netherlands",
+    "US": "united_states",
+    "CA": "canada",
+    "AU": "australia",
+}
+
 # Países monitoreados con su código geo pytrends y idioma principal
 MONITORED_COUNTRIES = [
     # Prioridad 1: LATAM + Europa hispana/lusófona

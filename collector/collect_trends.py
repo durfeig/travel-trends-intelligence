@@ -29,7 +29,7 @@ from typing import Optional
 from pytrends.request import TrendReq
 from supabase import create_client, Client
 
-from keywords import MONITORED_COUNTRIES, get_destination_batches, get_travel_keywords, DESTINATIONS
+from keywords import MONITORED_COUNTRIES, TRENDING_SEARCH_COUNTRY, get_destination_batches, get_travel_keywords, DESTINATIONS
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 log = logging.getLogger(__name__)
@@ -83,8 +83,11 @@ def collect_trending(sb: Client, pytrends: TrendReq) -> None:
 
     for country in MONITORED_COUNTRIES:
         geo = country["geo"]
+        pn = TRENDING_SEARCH_COUNTRY.get(geo)
+        if not pn:
+            continue
         try:
-            df = pytrends.trending_searches(pn=geo.lower())
+            df = pytrends.trending_searches(pn=pn)
             trending_terms = df[0].tolist()
             travel_terms = [t for t in trending_terms if is_travel_related(t)]
             log.info(f"  {geo}: {len(travel_terms)} términos de viaje en trending")
