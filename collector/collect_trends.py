@@ -13,6 +13,16 @@ import os
 import time
 import argparse
 import logging
+
+# urllib3 >= 2.0 renombró method_whitelist → allowed_methods.
+# pytrends todavía usa el nombre viejo, este shim lo parchea en runtime.
+import urllib3.util.retry as _retry
+_orig_retry_init = _retry.Retry.__init__
+def _patched_retry_init(self, *args, **kwargs):
+    if "method_whitelist" in kwargs:
+        kwargs["allowed_methods"] = kwargs.pop("method_whitelist")
+    _orig_retry_init(self, *args, **kwargs)
+_retry.Retry.__init__ = _patched_retry_init
 from datetime import date, datetime
 from typing import Optional
 
