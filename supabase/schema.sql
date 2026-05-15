@@ -38,7 +38,7 @@ CREATE TABLE IF NOT EXISTS campaign_insights (
   target_audience TEXT,
   timing_recommendation TEXT,
   generated_at TIMESTAMPTZ DEFAULT NOW(),
-  UNIQUE (destination, origin_country, DATE_TRUNC('day', generated_at))
+  generated_date DATE NOT NULL DEFAULT CURRENT_DATE
 );
 
 -- Índices para queries frecuentes
@@ -47,6 +47,7 @@ CREATE INDEX IF NOT EXISTS idx_snapshots_destination ON trend_snapshots(destinat
 CREATE INDEX IF NOT EXISTS idx_metrics_country_week ON trend_metrics(origin_country, week_start DESC);
 CREATE INDEX IF NOT EXISTS idx_metrics_velocity ON trend_metrics(velocity_pct DESC);
 CREATE INDEX IF NOT EXISTS idx_metrics_spike ON trend_metrics(is_spike) WHERE is_spike = TRUE;
+CREATE UNIQUE INDEX IF NOT EXISTS idx_insights_unique_day ON campaign_insights(destination, origin_country, generated_date);
 
 -- RLS: lectura pública para el dashboard (sin autenticación)
 ALTER TABLE trend_snapshots ENABLE ROW LEVEL SECURITY;
