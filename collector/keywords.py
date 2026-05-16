@@ -2,6 +2,56 @@
 Definición de destinos monitoreados y keywords de viaje por idioma.
 """
 
+# Mapeo de nombre en español → título exacto en Wikipedia en inglés
+# Usado por wikipedia_collector.py para consultar pageviews globales
+DESTINATIONS_WIKI_EN: dict[str, str] = {
+    # Asia-Pacífico
+    "Japón": "Japan", "Tailandia": "Thailand", "Bali": "Bali",
+    "Singapur": "Singapore", "Vietnam": "Vietnam", "Corea del Sur": "South Korea",
+    "Filipinas": "Philippines", "Indonesia": "Indonesia", "Malasia": "Malaysia",
+    "Camboya": "Cambodia", "Sri Lanka": "Sri Lanka", "Nepal": "Nepal",
+    "India": "India", "Maldivas": "Maldives", "Hong Kong": "Hong Kong",
+    "Taiwán": "Taiwan", "Myanmar": "Myanmar", "Laos": "Laos",
+    "Bangladesh": "Bangladesh", "Bután": "Bhutan",
+    # Europa
+    "España": "Spain", "Francia": "France", "Italia": "Italy",
+    "Portugal": "Portugal", "Grecia": "Greece", "Alemania": "Germany",
+    "Países Bajos": "Netherlands", "Suiza": "Switzerland", "Austria": "Austria",
+    "Bélgica": "Belgium", "Reino Unido": "United Kingdom", "Irlanda": "Ireland",
+    "Suecia": "Sweden", "Noruega": "Norway", "Dinamarca": "Denmark",
+    "Finlandia": "Finland", "Polonia": "Poland", "República Checa": "Czech Republic",
+    "Hungría": "Hungary", "Croacia": "Croatia", "Turquía": "Turkey",
+    "Islandia": "Iceland", "Escocia": "Scotland", "Albania": "Albania",
+    "Montenegro": "Montenegro", "Serbia": "Serbia", "Eslovenia": "Slovenia",
+    "Malta": "Malta", "Chipre": "Cyprus", "Bulgaria": "Bulgaria",
+    # Oriente Medio y África
+    "Dubai": "Dubai", "Marruecos": "Morocco", "Egipto": "Egypt",
+    "Israel": "Israel", "Jordania": "Jordan", "Qatar": "Qatar",
+    "Abu Dhabi": "Abu Dhabi", "Omán": "Oman", "Kenia": "Kenya",
+    "Tanzania": "Tanzania", "Sudáfrica": "South Africa", "Etiopía": "Ethiopia",
+    "Namibia": "Namibia", "Madagascar": "Madagascar", "Ruanda": "Rwanda",
+    "Túnez": "Tunisia", "Senegal": "Senegal", "Ghana": "Ghana",
+    "Costa de Marfil": "Ivory Coast", "Mozambique": "Mozambique",
+    # América
+    "México": "Mexico", "Cuba": "Cuba", "República Dominicana": "Dominican Republic",
+    "Colombia": "Colombia", "Perú": "Peru", "Brasil": "Brazil",
+    "Argentina": "Argentina", "Chile": "Chile", "Ecuador": "Ecuador",
+    "Bolivia": "Bolivia", "Costa Rica": "Costa Rica", "Panamá": "Panama",
+    "Guatemala": "Guatemala", "Honduras": "Honduras", "Nicaragua": "Nicaragua",
+    "Jamaica": "Jamaica", "Barbados": "Barbados", "Trinidad y Tobago": "Trinidad and Tobago",
+    "Bahamas": "The Bahamas", "Aruba": "Aruba",
+    "Cancún": "Cancún", "Cartagena": "Cartagena, Colombia",
+    "Buenos Aires": "Buenos Aires", "Lima": "Lima", "Rio de Janeiro": "Rio de Janeiro",
+    "Ciudad de México": "Mexico City", "Medellín": "Medellín",
+    "Bogotá": "Bogotá", "Santiago": "Santiago", "La Habana": "Havana",
+    # América del Norte / Oceanía
+    "Nueva York": "New York City", "Miami": "Miami", "Los Ángeles": "Los Angeles",
+    "Las Vegas": "Las Vegas", "Chicago": "Chicago", "Canadá": "Canada",
+    "Vancouver": "Vancouver", "Toronto": "Toronto", "Montreal": "Montreal",
+    "Alaska": "Alaska", "Australia": "Australia", "Nueva Zelanda": "New Zealand",
+    "Hawaii": "Hawaii", "Fiyi": "Fiji", "Tahití": "Tahiti",
+}
+
 # ~150 destinos globales agrupados en batches de 5 (límite de pytrends)
 DESTINATIONS = [
     # Asia-Pacífico
