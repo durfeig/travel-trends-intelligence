@@ -27,6 +27,7 @@ export type TrendMetric = {
   velocity_pct: number;
   is_spike: boolean;
   rank_in_country: number;
+  sources: string[];
 };
 
 export type CampaignInsight = {

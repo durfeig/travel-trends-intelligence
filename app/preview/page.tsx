@@ -8,18 +8,18 @@ import InsightPanel from "@/components/InsightPanel";
 import { TrendMetric } from "@/lib/supabase";
 
 const MOCK_DATA: TrendMetric[] = [
-  { destination: "Tokio", origin_country: "ES", week_start: "2026-05-12", avg_score: 82, max_score: 95, velocity_pct: 67, is_spike: true, rank_in_country: 1 },
-  { destination: "Tailandia", origin_country: "ES", week_start: "2026-05-12", avg_score: 74, max_score: 88, velocity_pct: 48, is_spike: true, rank_in_country: 2 },
-  { destination: "Vietnam", origin_country: "AR", week_start: "2026-05-12", avg_score: 61, max_score: 79, velocity_pct: 41, is_spike: true, rank_in_country: 1 },
-  { destination: "Bali", origin_country: "BR", week_start: "2026-05-12", avg_score: 70, max_score: 85, velocity_pct: 38, is_spike: true, rank_in_country: 1 },
-  { destination: "Japón", origin_country: "MX", week_start: "2026-05-12", avg_score: 65, max_score: 80, velocity_pct: 35, is_spike: true, rank_in_country: 1 },
-  { destination: "Marruecos", origin_country: "FR", week_start: "2026-05-12", avg_score: 58, max_score: 72, velocity_pct: 29, is_spike: false, rank_in_country: 1 },
-  { destination: "Grecia", origin_country: "DE", week_start: "2026-05-12", avg_score: 55, max_score: 68, velocity_pct: 26, is_spike: false, rank_in_country: 1 },
-  { destination: "Dubai", origin_country: "GB", week_start: "2026-05-12", avg_score: 72, max_score: 89, velocity_pct: 24, is_spike: false, rank_in_country: 1 },
-  { destination: "Turquía", origin_country: "ES", week_start: "2026-05-12", avg_score: 48, max_score: 61, velocity_pct: 22, is_spike: false, rank_in_country: 3 },
-  { destination: "Maldivas", origin_country: "IT", week_start: "2026-05-12", avg_score: 44, max_score: 58, velocity_pct: 19, is_spike: false, rank_in_country: 1 },
-  { destination: "Singapur", origin_country: "CO", week_start: "2026-05-12", avg_score: 40, max_score: 52, velocity_pct: 15, is_spike: false, rank_in_country: 2 },
-  { destination: "Nueva York", origin_country: "AR", week_start: "2026-05-12", avg_score: 38, max_score: 49, velocity_pct: 12, is_spike: false, rank_in_country: 2 },
+  { destination: "Tokio", origin_country: "ES", week_start: "2026-05-12", avg_score: 82, max_score: 95, velocity_pct: 67, is_spike: true, rank_in_country: 1, sources: ["rising_query", "wikipedia", "travelpayouts"] },
+  { destination: "Tailandia", origin_country: "ES", week_start: "2026-05-12", avg_score: 74, max_score: 88, velocity_pct: 48, is_spike: true, rank_in_country: 2, sources: ["rising_query", "travelpayouts"] },
+  { destination: "Vietnam", origin_country: "AR", week_start: "2026-05-12", avg_score: 61, max_score: 79, velocity_pct: 41, is_spike: true, rank_in_country: 1, sources: ["rising_query", "wikipedia"] },
+  { destination: "Bali", origin_country: "BR", week_start: "2026-05-12", avg_score: 70, max_score: 85, velocity_pct: 38, is_spike: true, rank_in_country: 1, sources: ["monitored", "travelpayouts"] },
+  { destination: "Japón", origin_country: "MX", week_start: "2026-05-12", avg_score: 65, max_score: 80, velocity_pct: 35, is_spike: true, rank_in_country: 1, sources: ["rising_query", "wikipedia", "travelpayouts"] },
+  { destination: "Marruecos", origin_country: "FR", week_start: "2026-05-12", avg_score: 58, max_score: 72, velocity_pct: 29, is_spike: false, rank_in_country: 1, sources: ["monitored"] },
+  { destination: "Grecia", origin_country: "DE", week_start: "2026-05-12", avg_score: 55, max_score: 68, velocity_pct: 26, is_spike: false, rank_in_country: 1, sources: ["monitored", "travelpayouts"] },
+  { destination: "Dubai", origin_country: "GB", week_start: "2026-05-12", avg_score: 72, max_score: 89, velocity_pct: 24, is_spike: false, rank_in_country: 1, sources: ["rising_query"] },
+  { destination: "Turquía", origin_country: "ES", week_start: "2026-05-12", avg_score: 48, max_score: 61, velocity_pct: 22, is_spike: false, rank_in_country: 3, sources: ["monitored", "wikipedia"] },
+  { destination: "Maldivas", origin_country: "IT", week_start: "2026-05-12", avg_score: 44, max_score: 58, velocity_pct: 19, is_spike: false, rank_in_country: 1, sources: ["monitored"] },
+  { destination: "Singapur", origin_country: "CO", week_start: "2026-05-12", avg_score: 40, max_score: 52, velocity_pct: 15, is_spike: false, rank_in_country: 2, sources: ["rising_query", "travelpayouts"] },
+  { destination: "Nueva York", origin_country: "AR", week_start: "2026-05-12", avg_score: 38, max_score: 49, velocity_pct: 12, is_spike: false, rank_in_country: 2, sources: ["monitored"] },
 ];
 
 const MOCK_INSIGHT = {

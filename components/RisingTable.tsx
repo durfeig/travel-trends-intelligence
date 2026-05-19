@@ -62,13 +62,14 @@ export default function RisingTable({ data, onSelectRow, showCountry = true }: P
               >
                 <td className="py-2.5 pr-4 text-gray-400">{i + 1}</td>
                 <td className="py-2.5 pr-4">
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 flex-wrap">
                     <span className="font-medium text-gray-900">{row.destination}</span>
                     {row.is_spike && (
                       <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-red-100 text-red-700">
                         SPIKE
                       </span>
                     )}
+                    <SourceBadges sources={row.sources ?? []} />
                   </div>
                 </td>
                 {showCountry && (
@@ -106,6 +107,42 @@ export default function RisingTable({ data, onSelectRow, showCountry = true }: P
         </table>
       </div>
     </div>
+  );
+}
+
+const SOURCE_CONFIG: Record<string, { label: string; className: string }> = {
+  trending:      { label: "G", className: "bg-blue-100 text-blue-700" },
+  rising_query:  { label: "G", className: "bg-blue-100 text-blue-700" },
+  monitored:     { label: "G", className: "bg-blue-100 text-blue-700" },
+  wikipedia:     { label: "W", className: "bg-gray-100 text-gray-600" },
+  travelpayouts: { label: "✈", className: "bg-green-100 text-green-700" },
+};
+
+function SourceBadges({ sources }: { sources: string[] }) {
+  // Deduplicar: varias fuentes de Google Trends cuentan como una
+  const seen = new Set<string>();
+  const badges: { label: string; className: string; key: string }[] = [];
+  for (const s of sources) {
+    const config = SOURCE_CONFIG[s];
+    if (!config) continue;
+    if (!seen.has(config.label)) {
+      seen.add(config.label);
+      badges.push({ ...config, key: s });
+    }
+  }
+  if (!badges.length) return null;
+  return (
+    <span className="flex items-center gap-1">
+      {badges.map((b) => (
+        <span
+          key={b.key}
+          title={b.key}
+          className={`inline-flex items-center justify-center w-5 h-5 rounded text-xs font-bold ${b.className}`}
+        >
+          {b.label}
+        </span>
+      ))}
+    </span>
   );
 }
 
