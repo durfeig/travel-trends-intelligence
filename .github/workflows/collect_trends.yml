@@ -60,6 +60,15 @@ jobs:
           cd collector
           python wikipedia_collector.py
 
+      - name: Run Travelpayouts collector
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+          TRAVELPAYOUTS_TOKEN: ${{ secrets.TRAVELPAYOUTS_TOKEN }}
+        run: |
+          cd collector
+          python travelpayouts_collector.py
+
       - name: Run analyzer
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
