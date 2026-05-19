@@ -30,8 +30,9 @@ def compute_metrics(sb: Client) -> None:
     # Obtener todos los snapshots de las últimas 2 semanas
     resp = (
         sb.table("trend_snapshots")
-        .select("destination, origin_country, interest_score, snapshot_date")
+        .select("destination, origin_country, interest_score, snapshot_date, source")
         .gte("snapshot_date", last_week.isoformat())
+        .limit(50000)
         .execute()
     )
     snapshots = resp.data
