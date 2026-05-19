@@ -41,7 +41,7 @@ def compute_metrics(sb: Client) -> None:
 
     # Agrupar por (destination, origin_country, semana)
     from collections import defaultdict
-    buckets: dict[tuple, dict] = defaultdict(lambda: {"this": [], "last": []})
+    buckets: dict[tuple, dict] = defaultdict(lambda: {"this": [], "last": [], "sources": set()})
 
     for snap in snapshots:
         snap_date = date.fromisoformat(snap["snapshot_date"])
@@ -50,6 +50,7 @@ def compute_metrics(sb: Client) -> None:
             buckets[key]["this"].append(snap["interest_score"])
         else:
             buckets[key]["last"].append(snap["interest_score"])
+        buckets[key]["sources"].add(snap["source"])
 
     # Calcular métricas
     upsert_rows = []
@@ -74,6 +75,7 @@ def compute_metrics(sb: Client) -> None:
             "max_score": max_this,
             "velocity_pct": round(velocity, 2),
             "is_spike": velocity >= SPIKE_THRESHOLD,
+            "sources": list(data["sources"]),
         })
 
     if not upsert_rows:
