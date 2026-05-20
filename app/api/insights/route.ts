@@ -70,7 +70,7 @@ export async function GET(req: NextRequest) {
   const countryName = COUNTRY_NAMES[geo.toUpperCase()] ?? geo;
 
   const message = await anthropic.messages.create({
-    model: "claude-haiku-4-5-20251001",
+    model: "claude-sonnet-4-6",
     max_tokens: 600,
     tools: [insightTool],
     tool_choice: { type: "tool", name: "generate_campaign_insight" },
