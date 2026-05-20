@@ -36,6 +36,10 @@ def compute_metrics(sb: Client) -> None:
         .execute()
     )
     snapshots = resp.data
+    log.info(f"Snapshots recibidos: {len(snapshots) if snapshots else 0}")
+    if snapshots:
+        dates = sorted(set(s["snapshot_date"] for s in snapshots))
+        log.info(f"Fechas en snapshots: {dates[:5]} ... {dates[-5:] if len(dates) > 5 else ''}")
     if not snapshots:
         log.warning("No hay snapshots recientes.")
         return
