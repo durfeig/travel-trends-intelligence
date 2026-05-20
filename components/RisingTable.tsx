@@ -16,7 +16,7 @@ export default function RisingTable({ data, onSelectRow, showCountry = true }: P
 
   if (!sorted.length) {
     return (
-      <div className="text-center py-12 text-gray-400">
+      <div className="text-center py-12 text-[#444444]" style={{ fontFamily: "var(--font-lato), sans-serif" }}>
         Sin datos de tendencias aún. El collector debe correr primero.
       </div>
     );
@@ -24,78 +24,87 @@ export default function RisingTable({ data, onSelectRow, showCountry = true }: P
 
   return (
     <div>
-      <div className="flex gap-2 mb-3">
-        <span className="text-sm text-gray-500">Ordenar por:</span>
-        <button
-          onClick={() => setSortBy("velocity_pct")}
-          className={`text-sm px-2 py-0.5 rounded ${sortBy === "velocity_pct" ? "bg-blue-100 text-blue-700 font-medium" : "text-gray-500 hover:text-gray-700"}`}
-        >
-          Crecimiento %
-        </button>
-        <button
-          onClick={() => setSortBy("avg_score")}
-          className={`text-sm px-2 py-0.5 rounded ${sortBy === "avg_score" ? "bg-blue-100 text-blue-700 font-medium" : "text-gray-500 hover:text-gray-700"}`}
-        >
-          Score
-        </button>
+      <div className="flex gap-2 mb-4 items-center">
+        <span className="text-xs uppercase tracking-wider text-[#444444]" style={{ fontFamily: "var(--font-montserrat), sans-serif", fontWeight: 600 }}>Ordenar por:</span>
+        {[
+          { key: "velocity_pct" as const, label: "Crecimiento %" },
+          { key: "avg_score" as const, label: "Score" },
+        ].map((opt) => (
+          <button
+            key={opt.key}
+            onClick={() => setSortBy(opt.key)}
+            className="text-xs px-3 py-1 rounded-full transition-all duration-200"
+            style={{
+              fontFamily: "var(--font-montserrat), sans-serif",
+              fontWeight: 700,
+              background: sortBy === opt.key ? "#E30233" : "#F1EBF4",
+              color: sortBy === opt.key ? "#fff" : "#444444",
+            }}
+          >
+            {opt.label}
+          </button>
+        ))}
       </div>
 
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto rounded-xl" style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.06)" }}>
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-gray-200">
-              <th className="text-left py-2 pr-4 font-medium text-gray-600">#</th>
-              <th className="text-left py-2 pr-4 font-medium text-gray-600">Destino</th>
+            <tr style={{ background: "#E30233" }}>
+              <th className="text-left py-3 px-4 text-white font-bold uppercase tracking-wider text-xs" style={{ fontFamily: "var(--font-montserrat), sans-serif" }}>#</th>
+              <th className="text-left py-3 px-4 text-white font-bold uppercase tracking-wider text-xs" style={{ fontFamily: "var(--font-montserrat), sans-serif" }}>Destino</th>
               {showCountry && (
-                <th className="text-left py-2 pr-4 font-medium text-gray-600">País origen</th>
+                <th className="text-left py-3 px-4 text-white font-bold uppercase tracking-wider text-xs" style={{ fontFamily: "var(--font-montserrat), sans-serif" }}>País origen</th>
               )}
-              <th className="text-right py-2 pr-4 font-medium text-gray-600">Crecimiento</th>
-              <th className="text-right py-2 pr-4 font-medium text-gray-600">Score</th>
-              <th className="text-right py-2 font-medium text-gray-600">Campaña</th>
+              <th className="text-right py-3 px-4 text-white font-bold uppercase tracking-wider text-xs" style={{ fontFamily: "var(--font-montserrat), sans-serif" }}>Crecimiento</th>
+              <th className="text-right py-3 px-4 text-white font-bold uppercase tracking-wider text-xs" style={{ fontFamily: "var(--font-montserrat), sans-serif" }}>Score</th>
+              <th className="text-right py-3 px-4 text-white font-bold uppercase tracking-wider text-xs" style={{ fontFamily: "var(--font-montserrat), sans-serif" }}>Fuentes</th>
+              <th className="text-right py-3 px-4 text-white font-bold uppercase tracking-wider text-xs" style={{ fontFamily: "var(--font-montserrat), sans-serif" }}>Campaña</th>
             </tr>
           </thead>
           <tbody>
             {sorted.slice(0, 30).map((row, i) => (
               <tr
                 key={`${row.destination}-${row.origin_country}`}
-                className="border-b border-gray-100 hover:bg-gray-50 transition-colors"
+                className="transition-colors duration-150 hover:bg-[#E8DEEF] cursor-pointer"
+                style={{ background: i % 2 === 0 ? "#ffffff" : "#F1EBF4" }}
+                onClick={() => onSelectRow?.(row)}
               >
-                <td className="py-2.5 pr-4 text-gray-400">{i + 1}</td>
-                <td className="py-2.5 pr-4">
+                <td className="py-3 px-4 text-[#444444] font-semibold" style={{ fontFamily: "var(--font-montserrat), sans-serif" }}>{i + 1}</td>
+                <td className="py-3 px-4">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <span className="font-medium text-gray-900">{row.destination}</span>
+                    <span className="font-bold text-[#000000]" style={{ fontFamily: "var(--font-montserrat), sans-serif" }}>{row.destination}</span>
                     {row.is_spike && (
-                      <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-red-100 text-red-700">
-                        SPIKE
+                      <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-black uppercase tracking-wider" style={{ fontFamily: "var(--font-montserrat), sans-serif", background: "#E30233", color: "#fff" }}>
+                        🔥 SPIKE
                       </span>
                     )}
-                    <SourceBadges sources={row.sources ?? []} />
                   </div>
                 </td>
                 {showCountry && (
-                  <td className="py-2.5 pr-4 text-gray-600">
+                  <td className="py-3 px-4 text-[#444444]" style={{ fontFamily: "var(--font-lato), sans-serif" }}>
                     {COUNTRY_NAMES[row.origin_country] ?? row.origin_country}
                   </td>
                 )}
-                <td className="py-2.5 pr-4 text-right">
+                <td className="py-3 px-4 text-right">
                   <VelocityBadge velocity={row.velocity_pct} />
                 </td>
-                <td className="py-2.5 pr-4 text-right">
+                <td className="py-3 px-4 text-right">
                   <div className="flex items-center justify-end gap-2">
-                    <div className="w-16 h-1.5 bg-gray-200 rounded-full overflow-hidden">
-                      <div
-                        className="h-full bg-blue-500 rounded-full"
-                        style={{ width: `${row.avg_score}%` }}
-                      />
+                    <div className="w-16 h-1.5 rounded-full overflow-hidden" style={{ background: "#E5E5E5" }}>
+                      <div className="h-full rounded-full" style={{ width: `${row.avg_score}%`, background: "#1689C0" }} />
                     </div>
-                    <span className="text-gray-700 w-6 text-right">{Math.round(row.avg_score)}</span>
+                    <span className="font-bold text-[#004E8A] w-6 text-right" style={{ fontFamily: "var(--font-montserrat), sans-serif" }}>{Math.round(row.avg_score)}</span>
                   </div>
                 </td>
-                <td className="py-2.5 text-right">
+                <td className="py-3 px-4 text-right">
+                  <SourceBadges sources={row.sources ?? []} />
+                </td>
+                <td className="py-3 px-4 text-right">
                   {onSelectRow && (
                     <button
-                      onClick={() => onSelectRow(row)}
-                      className="text-xs text-blue-600 hover:text-blue-800 hover:underline"
+                      onClick={(e) => { e.stopPropagation(); onSelectRow(row); }}
+                      className="text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full transition-all duration-200 hover:opacity-80"
+                      style={{ fontFamily: "var(--font-montserrat), sans-serif", background: "#004E8A", color: "#fff" }}
                     >
                       Ver copy
                     </button>
@@ -110,18 +119,17 @@ export default function RisingTable({ data, onSelectRow, showCountry = true }: P
   );
 }
 
-const SOURCE_CONFIG: Record<string, { label: string; className: string }> = {
-  trending:      { label: "G", className: "bg-blue-100 text-blue-700" },
-  rising_query:  { label: "G", className: "bg-blue-100 text-blue-700" },
-  monitored:     { label: "G", className: "bg-blue-100 text-blue-700" },
-  wikipedia:     { label: "W", className: "bg-gray-100 text-gray-600" },
-  travelpayouts: { label: "✈", className: "bg-green-100 text-green-700" },
+const SOURCE_CONFIG: Record<string, { label: string; bg: string; color: string; title: string }> = {
+  trending:      { label: "G", bg: "#1689C0", color: "#fff", title: "Google Trends" },
+  rising_query:  { label: "G", bg: "#1689C0", color: "#fff", title: "Google Trends" },
+  monitored:     { label: "G", bg: "#1689C0", color: "#fff", title: "Google Trends" },
+  wikipedia:     { label: "W", bg: "#444444", color: "#fff", title: "Wikipedia Pageviews" },
+  travelpayouts: { label: "✈", bg: "#004E8A", color: "#fff", title: "Travelpayouts (vuelos reales)" },
 };
 
 function SourceBadges({ sources }: { sources: string[] }) {
-  // Deduplicar: varias fuentes de Google Trends cuentan como una
   const seen = new Set<string>();
-  const badges: { label: string; className: string; key: string }[] = [];
+  const badges: { label: string; bg: string; color: string; title: string; key: string }[] = [];
   for (const s of sources) {
     const config = SOURCE_CONFIG[s];
     if (!config) continue;
@@ -132,12 +140,13 @@ function SourceBadges({ sources }: { sources: string[] }) {
   }
   if (!badges.length) return null;
   return (
-    <span className="flex items-center gap-1">
+    <span className="flex items-center justify-end gap-1">
       {badges.map((b) => (
         <span
           key={b.key}
-          title={b.key}
-          className={`inline-flex items-center justify-center w-5 h-5 rounded text-xs font-bold ${b.className}`}
+          title={b.title}
+          className="inline-flex items-center justify-center w-5 h-5 rounded-full text-xs font-black"
+          style={{ fontFamily: "var(--font-montserrat), sans-serif", background: b.bg, color: b.color }}
         >
           {b.label}
         </span>
@@ -147,8 +156,9 @@ function SourceBadges({ sources }: { sources: string[] }) {
 }
 
 function VelocityBadge({ velocity }: { velocity: number }) {
-  if (velocity >= 50) return <span className="font-bold text-red-600">+{velocity.toFixed(0)}%</span>;
-  if (velocity >= 20) return <span className="font-semibold text-orange-500">+{velocity.toFixed(0)}%</span>;
-  if (velocity > 0) return <span className="text-green-600">+{velocity.toFixed(0)}%</span>;
-  return <span className="text-gray-400">{velocity.toFixed(0)}%</span>;
+  const style: React.CSSProperties = { fontFamily: "var(--font-montserrat), sans-serif", fontWeight: 800 };
+  if (velocity >= 50) return <span className="text-sm" style={{ ...style, color: "#E30233" }}>+{velocity.toFixed(0)}%</span>;
+  if (velocity >= 20) return <span className="text-sm" style={{ ...style, color: "#A63D81" }}>+{velocity.toFixed(0)}%</span>;
+  if (velocity > 0)  return <span className="text-sm" style={{ ...style, color: "#1689C0" }}>+{velocity.toFixed(0)}%</span>;
+  return <span className="text-sm" style={{ ...style, color: "#444444" }}>{velocity.toFixed(0)}%</span>;
 }
