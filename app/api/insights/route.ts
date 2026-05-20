@@ -4,6 +4,33 @@ import { supabase, COUNTRY_NAMES } from "@/lib/supabase";
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
+const insightTool: Anthropic.Tool = {
+  name: "generate_campaign_insight",
+  description: "Genera un análisis de marketing y copy de campaña para eSIM",
+  input_schema: {
+    type: "object" as const,
+    properties: {
+      insight_text: {
+        type: "string",
+        description: "Hipótesis de por qué está creciendo este destino ahora (2-3 oraciones)",
+      },
+      timing_recommendation: {
+        type: "string",
+        description: "Cuándo lanzar la campaña y por qué (considera la anticipación típica de compra de eSIM)",
+      },
+      campaign_copy: {
+        type: "string",
+        description: "Copy de campaña en el idioma del país de origen para eSIM en el destino (2-3 oraciones, tono urgente pero informativo)",
+      },
+      target_audience: {
+        type: "string",
+        description: "Descripción del segmento de audiencia más probable",
+      },
+    },
+    required: ["insight_text", "timing_recommendation", "campaign_copy", "target_audience"],
+  },
+};
+
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const geo = searchParams.get("geo");
@@ -42,42 +69,33 @@ export async function GET(req: NextRequest) {
   const isSpike = metrics?.is_spike ?? false;
   const countryName = COUNTRY_NAMES[geo.toUpperCase()] ?? geo;
 
-  const prompt = `Eres un estratega de marketing especializado en eSIMs y telecomunicaciones para viajeros.
-
-DATOS:
-- País de origen de búsquedas: ${countryName} (${geo.toUpperCase()})
-- Destino en tendencia: ${destination}
-- Crecimiento en búsquedas esta semana: ${velocity.toFixed(1)}%${isSpike ? " (¡SPIKE detectado!)" : ""}
-- Score de interés promedio: ${score.toFixed(0)}/100
-
-TAREA: Genera un análisis de marketing para una campaña de eSIM enfocada en viajeros de ${countryName} que van a ${destination}.
-
-Responde en JSON con este formato exacto:
-{
-  "insight_text": "Hipótesis de por qué está creciendo este destino ahora (2-3 oraciones)",
-  "timing_recommendation": "Cuándo lanzar la campaña y por qué (considera el anticipación típica de compra de eSIM)",
-  "campaign_copy": "Copy de campaña en el idioma de ${countryName} para eSIM en ${destination} (2-3 oraciones, tono urgente pero informativo, menciona conectividad/cobertura)",
-  "target_audience": "Descripción del segmento de audiencia más probable"
-}`;
-
   const message = await anthropic.messages.create({
     model: "claude-sonnet-4-6",
     max_tokens: 600,
-    messages: [{ role: "user", content: prompt }],
+    tools: [insightTool],
+    tool_choice: { type: "tool", name: "generate_campaign_insight" },
+    messages: [
+      {
+        role: "user",
+        content: `Eres un estratega de marketing especializado en eSIMs para viajeros.
+
+DATOS:
+- País de origen: ${countryName} (${geo.toUpperCase()})
+- Destino en tendencia: ${destination}
+- Crecimiento esta semana: ${velocity.toFixed(1)}%${isSpike ? " (¡SPIKE!)" : ""}
+- Score de interés: ${score.toFixed(0)}/100
+
+Genera el análisis de marketing para una campaña de eSIM dirigida a viajeros de ${countryName} que van a ${destination}.`,
+      },
+    ],
   });
 
-  const content = message.content[0];
-  if (content.type !== "text") {
+  const toolUse = message.content.find((b) => b.type === "tool_use");
+  if (!toolUse || toolUse.type !== "tool_use") {
     return NextResponse.json({ error: "Respuesta inesperada de Claude" }, { status: 500 });
   }
 
-  let parsed: Record<string, string>;
-  try {
-    const jsonMatch = content.text.match(/\{[\s\S]*\}/);
-    parsed = JSON.parse(jsonMatch?.[0] ?? content.text);
-  } catch {
-    return NextResponse.json({ error: "No se pudo parsear la respuesta de Claude" }, { status: 500 });
-  }
+  const parsed = toolUse.input as Record<string, string>;
 
   // Persistir en Supabase
   const { data: saved, error } = await supabase
